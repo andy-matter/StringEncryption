@@ -1,6 +1,5 @@
-
-#ifndef Encrypt
-#define Encrypt
+#ifndef Encrypt_AES
+#define Encrypt_AES
 
 
 class Encryption {
