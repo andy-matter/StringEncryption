@@ -128,7 +128,7 @@ void Encryption::MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) 
 
 
 
-void setSecrets (const uint8_t *Key, const byte Passes) {
+void Encryption::setSecrets (const uint8_t *Key, const byte Passes) {
 
   AES_Key = Key;
   AES_Passes = Passes;
