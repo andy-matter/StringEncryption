@@ -48,14 +48,28 @@ void Encryption::mergeByteArrays(byte** splitArrays, int numArrays, int splitLen
 
 
 
-String Encryption::removeSalt(const String& input, const String& delimiter) {
-  int delimiterIndex = input.indexOf(delimiter);
+String Encryption::removeSalt(const String& input) {
 
-  if (delimiterIndex != -1) {
-    return input.substring(0, delimiterIndex);
+  const unsigned int SEGMENT_LENGTH = 16;
+  const char DELIMITER = '!';
+
+  String output = "";
+  
+  // Split the input string into segments
+  for (unsigned int i = 0; i <= input.length(); i += SEGMENT_LENGTH) {
+
+    String segment = input.substring(i, (i + SEGMENT_LENGTH));
+
+    int delimiterIndex = segment.indexOf(DELIMITER);
+
+    if (delimiterIndex != -1) {
+      segment = segment.substring(0, delimiterIndex);
+    }
+
+    output += segment;
   }
 
-  return input;  // Return the entire string if delimiter not found
+  return output;
 }
 
 
@@ -70,22 +84,20 @@ String Encryption::addSalt(String input) {
   // Split the input string into segments
   for (unsigned int i = 0; i < input.length(); i += MAX_SEGMENT_LENGTH) {
     String segment = input.substring(i, min((i + MAX_SEGMENT_LENGTH), input.length()));
-    
-    // Add delimiter if not the first segment
-    if (output.length() > 0) {
-      output += DELIMITER;
+
+    String salt;
+
+    // Add delimiter to segment
+    segment += DELIMITER;
+
+    // Add salt to fill the remaining space up to 16 characters
+    while (segment.length() < 16) {
+      salt = char(random(34, 255)); // Ecxlude everything up to char34 (!)
+      segment += salt;
     }
-    
+
     // Add segment to output
     output += segment;
-    
-    // Fill segment up to 16 characters with random characters
-    while (segment.length() < 16) {
-      segment += char(random(34, 127));  // ASCII characters between '"' and '~'
-    }
-    
-    // Add salt to segment
-    output += segment.substring(MAX_SEGMENT_LENGTH);
   }
   
   return output;
@@ -214,10 +226,7 @@ String Encryption::Encrypt(String InputString) {
 }
 
 
-String Encryption::Decrypt(String InputString)
-{
-
-  String delimiter = "!";
+String Encryption::Decrypt(String InputString) {
 
   aes256.setKey(AES_Key, 32);
 
@@ -256,15 +265,15 @@ String Encryption::Decrypt(String InputString)
 
 
   // Byte-Array to String
-  String DectyptedString = "";
+  String SaltedDectyptedString = "";
 
   for (int i = 0; i < mergedLength; i++) {
-    DectyptedString += (char)mergedArray[i];
+    SaltedDectyptedString += (char)mergedArray[i];
   }
 
 
   // Remove salt
-  DectyptedString = removeSalt(DectyptedString, delimiter);
+  DectyptedString = removeSalt(SaltedDectyptedString);
 
   return DectyptedString;
 }

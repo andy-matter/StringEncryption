@@ -32,7 +32,7 @@ private:
   void mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* mergedArray);
 
   String addSalt(String input);
-  String removeSalt(const String& input, const String& delimiter);
+  String removeSalt(const String& input);
 
   void MultiPassEncrypt (uint8_t *input, uint8_t *output, int passes);
   void MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes);
