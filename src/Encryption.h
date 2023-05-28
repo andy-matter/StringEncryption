@@ -11,14 +11,14 @@ public:
   void setSecrets (const uint8_t *Key);
 
 
-/** @param InputString: The unencryptet plain text data to be encrypted
-  * @param return: The encrypted data using multiple AES256 encryption-cycles and random salt
+/** @param InputString: The unencryptet plain text data to be encrypted (MUST NOT CONTAIN "!")
+  * @param return: The encrypted data using AES256 encryption and random salt
   */
   String Encrypt(String InputString/*, const uint8_t *Key, int Passes*/);
 
 
 /** @param InputString: The encryptet cypher text data to be decrypted
-  * @param return: The decrypted data using multiple AES256 decryption-cycles
+  * @param return: The decrypted data using AES256 decryption
   */
   String Decrypt(String InputString/*, const uint8_t *Key, int Passes*/);
 
