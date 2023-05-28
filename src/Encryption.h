@@ -31,7 +31,7 @@ private:
   void splitByteArray(byte* originalArray, int originalLength, int splitLength, byte** splitArrays, int& numArrays);
   void mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* mergedArray);
 
-  String addSalt(String input, const String& delimiter, byte min_quantity, byte quantity);
+  String addSalt(String input);
   String removeSalt(const String& input, const String& delimiter);
 
   void MultiPassEncrypt (uint8_t *input, uint8_t *output, int passes);

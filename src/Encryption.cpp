@@ -162,9 +162,6 @@ void Encryption::setSecrets (const uint8_t *Key, const byte Passes) {
 
 String Encryption::Encrypt(String InputString) {
 
-  String delimiter = "!";
-  byte minAddedSalt = 2;  // Add at least 2 bytes of salt
-
   aes256.setKey(AES_Key, 32);
 
   // Add salt
