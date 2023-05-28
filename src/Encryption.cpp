@@ -61,31 +61,26 @@ String Encryption::removeSalt(const String& input, const String& delimiter) {
 
 String Encryption::addSalt(String input) {
 
-  const int MAX_SEGMENT_LENGTH = 13;
+  const unsigned int MAX_SEGMENT_LENGTH = 13;
   const int SALT_LENGTH = 16 - MAX_SEGMENT_LENGTH;
   const char DELIMITER = '!';
 
   String output;
   
   // Split the input string into segments
-  for (int i = 0; i < input.length(); i += MAX_SEGMENT_LENGTH) {
-    String segment = input.substring(i, min(i + MAX_SEGMENT_LENGTH, input.length()));
-    
-    // Add delimiter if not the first segment
-    if (output.length() > 0) {
-      output += DELIMITER;
-    }
-    
-    // Add segment to output
-    output += segment;
+  for (unsigned int i = 0; i < input.length(); i += MAX_SEGMENT_LENGTH) {
+    String segment = input.substring(i, min((i + MAX_SEGMENT_LENGTH), input.length()));
     
     // Fill segment up to 16 characters with random characters
     while (segment.length() < 16) {
-      segment += char(random(34, 127));  // ASCII characters between '!' and '~'
+      segment += char(random(33, 127));  // ASCII characters between '!' and '~'
     }
     
-    // Add salt to segment
-    output += segment.substring(MAX_SEGMENT_LENGTH);
+    // Add delimiter as the last symbol of the segment
+    segment.setCharAt(segment.length() - 1, DELIMITER);
+    
+    // Add segment to output
+    output += segment;
   }
   
   return output;
