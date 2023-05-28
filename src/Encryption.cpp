@@ -128,12 +128,19 @@ void Encryption::MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) 
 
 
 
+void setSecrets (const uint8_t *Key, const byte Passes) {
 
-String Encryption::Encrypt(String InputString, const uint8_t *Key, int Passes) {
+  AES_Key = Key;
+  AES_Passes = Passes;
 
-  String delimiter = "--";
+}
 
-  aes256.setKey(Key, 32);
+
+String Encryption::Encrypt(String InputString) {
+
+  String delimiter = "---";
+
+  aes256.setKey(AES_Key, 32);
 
   // Add salt
   int reminder = InputString.length() % 16;
@@ -159,7 +166,7 @@ String Encryption::Encrypt(String InputString, const uint8_t *Key, int Passes) {
 
   // Encrypt the byte[16] arrays
   for (int i = 0; i < numArrays; i++) {
-    MultiPassEncrypt(splitArrays[i], splitArrays[i], Passes);
+    MultiPassEncrypt(splitArrays[i], splitArrays[i], AES_Passes);
   }
 
 
@@ -187,12 +194,12 @@ String Encryption::Encrypt(String InputString, const uint8_t *Key, int Passes) {
 }
 
 
-String Encryption::Decrypt(String InputString, const uint8_t *Key, int Passes)
+String Encryption::Decrypt(String InputString)
 {
 
-  String delimiter = "--";
+  String delimiter = "---";
 
-  aes256.setKey(Key, 32);
+  aes256.setKey(AES_Key, 32);
 
   // String to Byte-Array
   byte PlaneBytes[InputString.length()];
@@ -211,7 +218,7 @@ String Encryption::Decrypt(String InputString, const uint8_t *Key, int Passes)
 
   // Decrypt
   for (int i = 0; i < numArrays; i++) {
-    MultiPassDecrypt(splitArrays[i], splitArrays[i], Passes);
+    MultiPassDecrypt(splitArrays[i], splitArrays[i], AES_Passes);
   }
 
 

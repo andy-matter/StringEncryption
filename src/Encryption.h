@@ -6,12 +6,14 @@
 class Encryption {
 public:
 
+  void setSecrets (const uint8_t *Key, const byte Passes);
+
 /** @param InputString: The unencryptet plain text data to be encrypted
   * @param Key: The AES256 encryption-key as a Byte[32] array
   * @param Passes: The number of encryption passes (0 = unencrypted passthrough)
   * @param return: The encrypted data using multiple AES256 encryption-cycles and random salt
   */
-  String Encrypt(String InputString, const uint8_t *Key, int Passes);
+  String Encrypt(String InputString/*, const uint8_t *Key, int Passes*/);
 
 
   /** @param InputString: The encryptet cypher text data to be decrypted
@@ -19,12 +21,12 @@ public:
   * @param Passes: The number of decryption passes
   * @param return: The decrypted data using multiple AES256 decryption-cycles
   */
-  String Decrypt(String InputString, const uint8_t *Key, int Passes);
+  String Decrypt(String InputString/*, const uint8_t *Key, int Passes*/);
 
 private:
 
-  int used_mqtt_send_variables = 0;
-  int used_mqtt_receive_variables = 0;
+  const uint8_t *AES_Key;
+  int AES_Passes;
 
   void splitByteArray(byte* originalArray, int originalLength, int splitLength, byte** splitArrays, int& numArrays);
   void mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* mergedArray);
