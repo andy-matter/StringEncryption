@@ -273,7 +273,7 @@ String Encryption::Decrypt(String InputString) {
 
 
   // Remove salt
-  DectyptedString = removeSalt(SaltedDectyptedString);
+  String DectyptedString = removeSalt(SaltedDectyptedString);
 
   return DectyptedString;
 }
