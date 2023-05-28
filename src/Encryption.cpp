@@ -11,7 +11,7 @@
 AES256 aes256;
 
 
-void splitByteArray(byte* originalArray, int originalLength, int splitLength, byte** splitArrays, int& numArrays) {
+void Encryption::splitByteArray(byte* originalArray, int originalLength, int splitLength, byte** splitArrays, int& numArrays) {
   // Calculate the number of split arrays needed
   numArrays = (originalLength + splitLength - 1) / splitLength;
 
@@ -36,7 +36,7 @@ void splitByteArray(byte* originalArray, int originalLength, int splitLength, by
 }
 
 
-void mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* mergedArray) {
+void Encryption::mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* mergedArray) {
   int currentIndex = 0;
   for (int i = 0; i < numArrays; i++) {
     for (int j = 0; j < splitLength; j++) {
@@ -48,7 +48,7 @@ void mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* m
 
 
 
-String removeSalt(const String& input, const String& delimiter) {
+String Encryption::removeSalt(const String& input, const String& delimiter) {
   int delimiterIndex = input.indexOf(delimiter);
 
   if (delimiterIndex != -1) {
@@ -59,7 +59,7 @@ String removeSalt(const String& input, const String& delimiter) {
 }
 
 
-String addSalt(String input, const String& delimiter, byte quantity) {
+String Encryption::addSalt(String input, const String& delimiter, byte quantity) {
 
   input += delimiter;   // Add string delimiter
 
@@ -75,7 +75,7 @@ String addSalt(String input, const String& delimiter, byte quantity) {
 
 
 
-void MultiPassEncrypt (uint8_t *input, uint8_t *output, int passes) {
+void Encryption::MultiPassEncrypt (uint8_t *input, uint8_t *output, int passes) {
 
   byte encryption_buffer[16];
 
@@ -101,7 +101,7 @@ void MultiPassEncrypt (uint8_t *input, uint8_t *output, int passes) {
 }
 
 
-void MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) {
+void Encryption::MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) {
 
   byte decryption_buffer[16];
 
@@ -129,7 +129,7 @@ void MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) {
 
 
 
-String Encrypt(String InputString, const uint8_t *Key, int Passes) {
+String Encryption::Encrypt(String InputString, const uint8_t *Key, int Passes) {
 
   String delimiter = "--";
 
@@ -187,7 +187,7 @@ String Encrypt(String InputString, const uint8_t *Key, int Passes) {
 }
 
 
-String Decrypt(String InputString, const uint8_t *Key, int Passes)
+String Encryption::Decrypt(String InputString, const uint8_t *Key, int Passes)
 {
 
   String delimiter = "--";
