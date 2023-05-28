@@ -130,8 +130,14 @@ void Encryption::MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) 
 
 void Encryption::setSecrets (const uint8_t *Key, const byte Passes) {
 
+  if (Passes <= 3) {
+    AES_Passes = Passes;
+  }
+  else {
+    AES_Passes = 3;
+  }
+
   AES_Key = Key;
-  AES_Passes = Passes;
 
 }
 
