@@ -59,11 +59,11 @@ String Encryption::removeSalt(const String& input, const String& delimiter) {
 }
 
 
-String Encryption::addSalt(String input, const String& delimiter, byte quantity) {
+String Encryption::addSalt(String input, const String& delimiter, byte min_quantity, byte quantity) {
 
-  input += delimiter;   // Add string delimiter
+  input += delimiter;   // Add delimiter string
 
-  for (int i = 0; i < quantity; i++) {    // add "quantity" bytes of salt
+  for (int i = 0; i < (min_quantity + quantity); i++) {    // add "quantity" bytes of salt
     uint8_t salt_int = random(0, 255);
     char salt_str = (char)salt_int;
 
@@ -145,19 +145,21 @@ void Encryption::setSecrets (const uint8_t *Key, const byte Passes) {
 String Encryption::Encrypt(String InputString) {
 
   String delimiter = "---";
+  byte minAddedSalt = 2;  // Add at least 2 bytes of salt
 
   aes256.setKey(AES_Key, 32);
 
   // Add salt
-  int reminder = InputString.length() % 16;
-  int saltToAdd = (16 - reminder) - delimiter.length();  // add salt up to the next multiple of 16
+  int reminder = (InputString.length() + delimiter.length() + minAddedSalt) % 16;
+  int saltToAdd = (16 - reminder);  // add salt up to the next multiple of 16
+  String SaltedString = "";
 
-    InputString = addSalt(InputString, delimiter, saltToAdd);
+  SaltedString = addSalt(InputString, delimiter, minAddedSalt, saltToAdd);
 
 
   // String to Byte-Array
-  byte PlaneBytes[InputString.length()];
-  InputString.getBytes(PlaneBytes, InputString.length() + 1);
+  byte PlaneBytes[SaltedString.length()];
+  SaltedString.getBytes(PlaneBytes, SaltedString.length() + 1);
 
 
   // Split into byte[16] arrays
