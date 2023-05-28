@@ -7,7 +7,7 @@ class Encryption {
 public:
 
 /** @param Key: The AES256 encryption-key as a Byte[32] array
-  * @param Passes: The number of encryption passes, between 0 and 3
+  * @param Passes: The number of encryption passes, between 0 and 5
   */
   void setSecrets (const uint8_t *Key, const byte Passes);
 

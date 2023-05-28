@@ -59,18 +59,36 @@ String Encryption::removeSalt(const String& input, const String& delimiter) {
 }
 
 
-String Encryption::addSalt(String input, const String& delimiter, byte min_quantity, byte quantity) {
+String Encryption::addSalt(String input) {
 
-  input += delimiter;   // Add delimiter string
+  const int MAX_SEGMENT_LENGTH = 13;
+  const int SALT_LENGTH = 16 - MAX_SEGMENT_LENGTH;
+  const char DELIMITER = '!';
 
-  for (int i = 0; i < (min_quantity + quantity); i++) {    // add "quantity" bytes of salt
-    uint8_t salt_int = random(34, 255);  // Everything from 34 and up because char33 (!) is the delimiter
-    char salt_str = (char)salt_int;
-
-    input += salt_str;
+  String output;
+  
+  // Split the input string into segments
+  for (int i = 0; i < input.length(); i += MAX_SEGMENT_LENGTH) {
+    String segment = input.substring(i, min(i + MAX_SEGMENT_LENGTH, input.length()));
+    
+    // Add delimiter if not the first segment
+    if (output.length() > 0) {
+      output += DELIMITER;
+    }
+    
+    // Add segment to output
+    output += segment;
+    
+    // Fill segment up to 16 characters with random characters
+    while (segment.length() < 16) {
+      segment += char(random(34, 127));  // ASCII characters between '!' and '~'
+    }
+    
+    // Add salt to segment
+    output += segment.substring(MAX_SEGMENT_LENGTH);
   }
-
-  return input;
+  
+  return output;
 }
 
 
@@ -150,11 +168,8 @@ String Encryption::Encrypt(String InputString) {
   aes256.setKey(AES_Key, 32);
 
   // Add salt
-  int reminder = (InputString.length() + delimiter.length() + minAddedSalt) % 16;
-  int saltToAdd = (16 - reminder);  // add salt up to the next multiple of 16
   String SaltedString = "";
-
-  SaltedString = addSalt(InputString, delimiter, minAddedSalt, saltToAdd);
+  SaltedString = addSalt(InputString);
 
 
   // String to Byte-Array
@@ -256,4 +271,3 @@ String Encryption::Decrypt(String InputString)
 
   return DectyptedString;
 }
-
