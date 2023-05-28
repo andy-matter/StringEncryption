@@ -64,7 +64,7 @@ String Encryption::addSalt(String input, const String& delimiter, byte min_quant
   input += delimiter;   // Add delimiter string
 
   for (int i = 0; i < (min_quantity + quantity); i++) {    // add "quantity" bytes of salt
-    uint8_t salt_int = random(0, 255);
+    uint8_t salt_int = random(34, 255);  // Everything from 34 and up because char33 (!) is the delimiter
     char salt_str = (char)salt_int;
 
     input += salt_str;
@@ -130,11 +130,11 @@ void Encryption::MultiPassDecrypt (uint8_t *input, uint8_t *output, int passes) 
 
 void Encryption::setSecrets (const uint8_t *Key, const byte Passes) {
 
-  if (Passes <= 3) {
+  if (Passes <= 5) {
     AES_Passes = Passes;
   }
   else {
-    AES_Passes = 3;
+    AES_Passes = 5;
   }
 
   AES_Key = Key;
@@ -144,7 +144,7 @@ void Encryption::setSecrets (const uint8_t *Key, const byte Passes) {
 
 String Encryption::Encrypt(String InputString) {
 
-  String delimiter = "---";
+  String delimiter = "!";
   byte minAddedSalt = 2;  // Add at least 2 bytes of salt
 
   aes256.setKey(AES_Key, 32);
@@ -205,7 +205,7 @@ String Encryption::Encrypt(String InputString) {
 String Encryption::Decrypt(String InputString)
 {
 
-  String delimiter = "---";
+  String delimiter = "!";
 
   aes256.setKey(AES_Key, 32);
 
