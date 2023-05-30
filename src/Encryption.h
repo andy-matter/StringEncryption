@@ -14,13 +14,13 @@ public:
 /** @param InputString: The unencrypted plain text data to be encrypted (MUST NOT CONTAIN '!')
   * @param return: The encrypted data using AES256 encryption and random salt
   */
-  String Encrypt(String InputString/*, const uint8_t *Key, int Passes*/);
+  String Encrypt(String InputString);
 
 
 /** @param InputString: The encrypted cypher text data to be decrypted
   * @param return: The decrypted data using AES256 decryption
   */
-  String Decrypt(String InputString/*, const uint8_t *Key, int Passes*/);
+  String Decrypt(String InputString);
 
 private:
 

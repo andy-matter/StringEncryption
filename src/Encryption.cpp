@@ -113,8 +113,7 @@ String Encryption::Encrypt(String InputString) {
 
 
   // Add salt
-  String SaltedString = "";
-  SaltedString = addSalt(InputString);
+  String SaltedString = addSalt(InputString);
 
 
 
