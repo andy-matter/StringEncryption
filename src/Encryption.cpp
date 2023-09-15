@@ -16,6 +16,8 @@ AES_ESP32 aes256;
 //AES256 aes256;
 
 
+
+
 void Encryption::StringToByteArrays(String inputString, int originalLength, int splitLength, byte** splitArrays) {
 
   int numArrays = (originalLength + splitLength - 1) / splitLength; // Calculate the number of target arrays needed
@@ -38,6 +40,8 @@ void Encryption::StringToByteArrays(String inputString, int originalLength, int 
     targetIndex++;
   }
 }
+
+
 
 
 String Encryption::ByteArraysToString(byte** splitArrays, int numArrays, int splitLength) {
@@ -65,6 +69,7 @@ String Encryption::ByteArraysToString(byte** splitArrays, int numArrays, int spl
 
 
 
+
 String Encryption::removeSalt(String input) {
 
   const unsigned int SEGMENT_LENGTH = 16;
@@ -88,6 +93,8 @@ String Encryption::removeSalt(String input) {
 
   return output;
 }
+
+
 
 
 String Encryption::addSalt(String input) {
@@ -126,12 +133,15 @@ String Encryption::addSalt(String input) {
 
 
 
+
 void Encryption::setSecrets(const uint8_t *Key) {
 
   AES_Key = Key;
 
   aes256.setKey(AES_Key, 256);
 }
+
+
 
 
 String Encryption::EncryptString(String InputString) {
