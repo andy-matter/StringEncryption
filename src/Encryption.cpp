@@ -5,20 +5,20 @@
 #include "WProgram.h"
 #endif
 
-//#include "Crypto_Core/Crypto.h"
-//#include "Crypto_Core/AES.h"
-#include "AES_ESP32.h"
+#include "Crypto_Core/Crypto.h"
+#include "Crypto_Core/AES.h"
+//#include "AES_ESP32.h"
 
 #include "Encryption.h"
 
 
-AES_ESP32 aes256;
-//AES256 aes256;
+//AES_ESP32 aes256;
+AES256 aes256;
 
 
 
 
-void Encryption::StringToByteArrays(String inputString, int originalLength, int splitLength, byte** splitArrays) {
+void StringEncryption::StringToByteArrays(String inputString, int originalLength, int splitLength, byte** splitArrays) {
 
   int numArrays = (originalLength + splitLength - 1) / splitLength; // Calculate the number of target arrays needed
   int sourceIndex = 0;
@@ -44,7 +44,7 @@ void Encryption::StringToByteArrays(String inputString, int originalLength, int 
 
 
 
-String Encryption::ByteArraysToString(byte** splitArrays, int numArrays, int splitLength) {
+String StringEncryption::ByteArraysToString(byte** splitArrays, int numArrays, int splitLength) {
   
   int outputLength = numArrays * splitLength;
   String outputString = "";
@@ -70,7 +70,7 @@ String Encryption::ByteArraysToString(byte** splitArrays, int numArrays, int spl
 
 
 
-String Encryption::removeSalt(String input) {
+String StringEncryption::removeSalt(String input) {
 
   const unsigned int SEGMENT_LENGTH = 16;
   const char DELIMITER = '!';
@@ -97,7 +97,7 @@ String Encryption::removeSalt(String input) {
 
 
 
-String Encryption::addSalt(String input) {
+String StringEncryption::addSalt(String input) {
 
   const unsigned int MAX_SEGMENT_LENGTH = 13;
   const int SALT_LENGTH = 16 - MAX_SEGMENT_LENGTH;
@@ -134,7 +134,7 @@ String Encryption::addSalt(String input) {
 
 
 
-void Encryption::setSecrets(const uint8_t *Key) {
+void StringEncryption::setSecrets(const uint8_t *Key) {
 
   AES_Key = Key;
 
@@ -144,7 +144,7 @@ void Encryption::setSecrets(const uint8_t *Key) {
 
 
 
-String Encryption::EncryptString(String InputString) {
+String StringEncryption::EncryptString(String InputString) {
 
   // Add salt
   String SaltedString = addSalt(InputString);
@@ -185,7 +185,7 @@ String Encryption::EncryptString(String InputString) {
 
 
 
-String Encryption::DecryptString(String InputString) {
+String StringEncryption::DecryptString(String InputString) {
 
   // String to byte[16] arrays
   const int originalLength = InputString.length();

@@ -3,7 +3,7 @@
 #define Encrypt_AES
 
 
-class Encryption {
+class StringEncryption {
 public:
 
 /** @param Key: The AES256 encryption-key as a Byte[32] array
