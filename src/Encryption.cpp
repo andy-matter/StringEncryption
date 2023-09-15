@@ -5,15 +5,15 @@
 #include "WProgram.h"
 #endif
 
-#include "Crypto_Core/Crypto.h"
-#include "Crypto_Core/AES.h"
-//#include "AES_ESP32.h"
+//#include "Crypto_Core/Crypto.h"
+//#include "Crypto_Core/AES.h"
+#include "AES_ESP32.h"
 
 #include "Encryption.h"
 
 
-//AES_ESP32 aes256;
-AES256 aes256;
+AES_ESP32 aes256;
+//AES256 aes256;
 
 
 void Encryption::splitByteArray(byte* originalArray, int originalLength, int splitLength, byte** splitArrays) {
@@ -79,16 +79,17 @@ String Encryption::addSalt(String input) {
 
   String output;
   
-  // Split the input string into segments
-  for (unsigned int i = 0; i < input.length(); i += MAX_SEGMENT_LENGTH) {
-    String segment = input.substring(i, min((i + MAX_SEGMENT_LENGTH), input.length()));
 
-    String salt;
+  for (unsigned int i = 0; i < input.length(); i += MAX_SEGMENT_LENGTH) {
+
+    // Get segment of input string
+    String segment = input.substring(i, min((i + MAX_SEGMENT_LENGTH), input.length()));
 
     // Add delimiter to segment
     segment += DELIMITER;
 
     // Add salt to fill the remaining space up to 16 characters
+    String salt = "";
     while (segment.length() < 16) {
       salt = char(random(34, 255)); // Ecxlude everything up to char33 (!)
       segment += salt;
@@ -98,6 +99,7 @@ String Encryption::addSalt(String input) {
     output += segment;
   }
   
+
   return output;
 }
 
@@ -109,7 +111,7 @@ void Encryption::setSecrets(const uint8_t *Key) {
 
   AES_Key = Key;
 
-  aes256.setKey(AES_Key, 32);
+  aes256.setKey(AES_Key, 256);
 }
 
 
