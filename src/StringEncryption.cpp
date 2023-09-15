@@ -9,7 +9,7 @@
 #include "Crypto_Core/AES.h"
 //#include "AES_ESP32.h"
 
-#include "Encryption.h"
+#include "StringEncryption.h"
 
 
 //AES_ESP32 aes256;
