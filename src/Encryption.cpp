@@ -16,16 +16,22 @@ AES_ESP32 aes256;
 //AES256 aes256;
 
 
-void Encryption::splitByteArray(byte* originalArray, int originalLength, int splitLength, byte** splitArrays) {
+void Encryption::StringToByteArrays(String inputString, int originalLength, int splitLength, byte** splitArrays) {
 
   int numArrays = (originalLength + splitLength - 1) / splitLength; // Calculate the number of target arrays needed
   int sourceIndex = 0;
   int targetIndex = 0;
 
+  byte inputBytes[originalLength];
+
+  for (int i = 0; i < originalLength; i++) {
+    inputBytes[i] = (byte)inputString.charAt(i);
+  }
+
   while (sourceIndex < originalLength && targetIndex < numArrays) {
     for (int i = 0; i < splitLength; i++) {
       if (sourceIndex < originalLength) {
-        splitArrays[targetIndex][i] = originalArray[sourceIndex];
+        splitArrays[targetIndex][i] = inputBytes[sourceIndex];
         sourceIndex++;
       }
     }
@@ -34,14 +40,27 @@ void Encryption::splitByteArray(byte* originalArray, int originalLength, int spl
 }
 
 
-void Encryption::mergeByteArrays(byte** splitArrays, int numArrays, int splitLength, byte* mergedArray) {
+String Encryption::ByteArraysToString(byte** splitArrays, int numArrays, int splitLength) {
+  
+  int outputLength = numArrays * splitLength;
+  String outputString = "";
+
   int currentIndex = 0;
+  byte mergedArray[outputLength];
+
   
   for (int i = 0; i < numArrays; i++) {
     for (int j = 0; j < splitLength; j++) {
       mergedArray[currentIndex++] = splitArrays[i][j];
     }
   }
+
+
+  for (int i = 0; i < outputLength; i++) {
+    outputString += (char)mergedArray[i];
+  }
+
+  return outputString;
 }
 
 
@@ -115,25 +134,14 @@ void Encryption::setSecrets(const uint8_t *Key) {
 }
 
 
-String Encryption::Encrypt(String InputString) {
-
+String Encryption::EncryptString(String InputString) {
 
   // Add salt
   String SaltedString = addSalt(InputString);
 
 
-
-  // String to Byte-Array
-  byte PlaneBytes[SaltedString.length()];
-
-  for (int i = 0; i < SaltedString.length(); i++) {
-    PlaneBytes[i] = (byte)SaltedString.charAt(i);
-  }
-
-
-
-  // Split into byte[16] arrays
-  const int originalLength = sizeof(PlaneBytes) / sizeof(PlaneBytes[0]);
+  // String to byte[16] arrays
+  const int originalLength = SaltedString.length();
   const int splitLength = 16;
   const int NumArrays = (originalLength + splitLength - 1) / splitLength;
   byte* splitArrays[NumArrays];
@@ -142,8 +150,7 @@ String Encryption::Encrypt(String InputString) {
     splitArrays[i] = new byte[splitLength];
   }
 
-  splitByteArray(PlaneBytes, originalLength, splitLength, splitArrays);
-
+  StringToByteArrays(SaltedString, originalLength, splitLength, splitArrays);
 
 
   // Encrypt the byte[16] arrays
@@ -152,13 +159,8 @@ String Encryption::Encrypt(String InputString) {
   }
 
 
-
   // Merge byte[16] arrays back together
-  const int mergedLength = NumArrays * splitLength;
-  byte mergedArray[mergedLength];
-
-  mergeByteArrays(splitArrays, NumArrays, splitLength, mergedArray);
-
+  String EnctyptedString = ByteArraysToString(splitArrays, NumArrays, splitLength);
 
 
   // Free the memory allocated for split arrays
@@ -167,33 +169,16 @@ String Encryption::Encrypt(String InputString) {
   } 
 
 
-
-  // Convert byte-array to String
-  String EnctyptedString = "";
-
-  for (int i = 0; i < mergedLength; i++) {
-    EnctyptedString += (char)mergedArray[i];
-  }
-
-
   return EnctyptedString;
 }
 
 
-String Encryption::Decrypt(String InputString) {
 
 
-  // String to Byte-Array
-  byte CypherBytes[InputString.length()];
+String Encryption::DecryptString(String InputString) {
 
-  for (int i = 0; i < InputString.length(); i++) {
-    CypherBytes[i] = (byte)InputString.charAt(i);
-  }
-
-
-
-  // Split into byte[16] arrays
-  const int originalLength = sizeof(CypherBytes) / sizeof(CypherBytes[0]);
+  // String to byte[16] arrays
+  const int originalLength = InputString.length();
   const int splitLength = 16;
   const int NumArrays = (originalLength + splitLength - 1) / splitLength;
   byte* splitArrays[NumArrays];
@@ -202,23 +187,17 @@ String Encryption::Decrypt(String InputString) {
     splitArrays[i] = new byte[splitLength];
   }
 
-  splitByteArray(CypherBytes, originalLength, splitLength, splitArrays);
+  StringToByteArrays(InputString, originalLength, splitLength, splitArrays);
 
 
-
-  // Decrypt
+  // Decrypt the byte[16] arrays
   for (int i = 0; i < NumArrays; i++) {
     aes256.decryptBlock(splitArrays[i], splitArrays[i]);
   }
 
 
-
   // Merge byte[16] arrays back together
-  const int mergedLength = NumArrays * splitLength;
-  byte mergedArray[mergedLength];
-
-  mergeByteArrays(splitArrays, NumArrays, splitLength, mergedArray);
-
+  String SaltedDectyptedString = ByteArraysToString(splitArrays, NumArrays, splitLength);
 
 
   // Free the memory allocated for split arrays
@@ -227,18 +206,9 @@ String Encryption::Decrypt(String InputString) {
   } 
 
 
-
-  // Byte-Array to String
-  String SaltedDectyptedString = "";
-
-  for (int i = 0; i < mergedLength; i++) {
-    SaltedDectyptedString += (char)mergedArray[i];
-  }
-
-
-
   // Remove salt
   String DectyptedString = removeSalt(SaltedDectyptedString);
+
 
   return DectyptedString;
 }
