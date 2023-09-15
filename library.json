@@ -8,11 +8,6 @@
     "type": "git",
     "url": "https://github.com/derAndiofficial/AES256-Encryption.git"
   },
-  "dependencies":
-    {
-      "name": "AES_ESP32",
-      "version": "https://github.com/derAndiofficial/AES_ESP32.git"
-    },
   "authors":
   [
     {
