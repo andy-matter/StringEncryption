@@ -7,8 +7,9 @@ class StringEncryption {
 public:
 
 /** @param Key: The AES256 encryption-key as a Byte[32] array
+  * @param Delimiter: The delimiter between data and salt
   */
-  void setSecrets (const uint8_t *Key);
+  void setup (const uint8_t *Key, char Delimiter);
 
 
 /** @param InputString: The unencrypted plain text data to be encrypted (MUST NOT CONTAIN '!')
@@ -25,12 +26,7 @@ public:
 private:
 
   const uint8_t *AES_Key;
-
-  void StringToByteArrays(String inputString, int originalLength, int splitLength, byte** splitArrays);
-  String ByteArraysToString(byte** splitArrays, int numArrays, int splitLength);
-
-  String addSalt(String input);
-  String removeSalt(String input);
+  char DELIMITER;
 
 };
 
