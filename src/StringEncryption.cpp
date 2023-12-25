@@ -30,7 +30,7 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
 
   const unsigned int MAX_SEGMENT_LENGTH = 13;  // 13 charaters from original String + delimiter + salt
 
-  String InternalOutString = "";
+  OutputString = "";
   
 
   // Split input into segments, add salt, encrypt and add to output String 
@@ -79,10 +79,9 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
     }
 
     // Add string to output
-    InternalOutString += String16_output;
+    OutputString += String16_output;
   }
   
-  OutputString = InternalOutString;
   return true;
 }
 
@@ -93,7 +92,7 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
 
   const unsigned int SEGMENT_LENGTH = 16;
 
-  String InternalOutString = "";
+  OutputString = "";
   
   // Split the input string into segments
   for (unsigned int i = 0; i < InputString.length(); i += SEGMENT_LENGTH) {
@@ -130,9 +129,8 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
     }
 
 
-    InternalOutString += out_segment;
+    OutputString += out_segment;
   }
 
-  OutputString = InternalOutString;
   return true;
 }
