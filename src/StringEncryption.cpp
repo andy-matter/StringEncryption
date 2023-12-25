@@ -10,7 +10,6 @@
 
 #include "StringEncryption.h"
 
-
 AES256 aes256;
 
 
@@ -27,11 +26,11 @@ void StringEncryption::setup(const uint8_t *Key, char Delimiter) {
 
 
 
-String StringEncryption::EncryptString(String InputString) {
+bool StringEncryption::EncryptString(String &InputString, String &OutputString) {
 
   const unsigned int MAX_SEGMENT_LENGTH = 13;  // 13 charaters from original String + delimiter + salt
 
-  String OutputString;
+  String InternalOutString = "";
   
 
   // Split input into segments, add salt, encrypt and add to output String 
@@ -80,21 +79,21 @@ String StringEncryption::EncryptString(String InputString) {
     }
 
     // Add string to output
-    OutputString += String16_output;
+    InternalOutString += String16_output;
   }
   
-
-  return OutputString;
+  OutputString = InternalOutString;
+  return true;
 }
 
 
 
 
-String StringEncryption::DecryptString(String InputString) {
+bool StringEncryption::DecryptString(String &InputString, String &OutputString) {
 
   const unsigned int SEGMENT_LENGTH = 16;
 
-  String OutputString = "";
+  String InternalOutString = "";
   
   // Split the input string into segments
   for (unsigned int i = 0; i < InputString.length(); i += SEGMENT_LENGTH) {
@@ -131,9 +130,9 @@ String StringEncryption::DecryptString(String InputString) {
     }
 
 
-    OutputString += out_segment;
+    InternalOutString += out_segment;
   }
 
-  return OutputString;
+  OutputString = InternalOutString;
+  return true;
 }
-
