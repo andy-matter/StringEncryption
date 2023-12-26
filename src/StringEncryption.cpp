@@ -15,12 +15,10 @@ AES256 aes256;
 
 
 
-void StringEncryption::setup(const uint8_t *Key, char Delimiter) {
+void StringEncryption::setup(const uint8_t *Key) { 
 
   AES_Key = Key;
   aes256.setKey(AES_Key, 256);
-
-  DELIMITER = Delimiter;
 }
 
 
@@ -118,18 +116,18 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
 
 
     // Remove the salt at the delimiter
-    int delimiterIndex = out_segment.indexOf(DELIMITER);
-
-    if (delimiterIndex != -1) {
-      out_segment = out_segment.substring(0, delimiterIndex);
+    // First look an index 13 if not at 13 decrement search
+    int delimiterIndex = 13;
+    if (out_segment[delimiterIndex] != DELIMITER) {
+      for (delimiterIndex; delimiterIndex >= 0; delimiterIndex--) {
+        if (out_segment[delimiterIndex] == DELIMITER) {
+          break;
+        }
+      }
     }
-    else
-    {
-      out_segment = "";
-    }
 
 
-    OutputString += out_segment;
+    OutputString += out_segment.substring(0, delimiterIndex);;
   }
 
   return true;
