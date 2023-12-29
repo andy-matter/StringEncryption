@@ -119,8 +119,10 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
     // First look an index 13 if not at 13 decrement search
     int delimiterIndex = 13;
     if (out_segment[delimiterIndex] != DELIMITER) {
-      for (delimiterIndex; delimiterIndex >= 0; delimiterIndex--) {
-        if (out_segment[delimiterIndex] == DELIMITER) {
+      
+      for (int i = delimiterIndex; i >= 0; i--) {
+        if (out_segment[i] == DELIMITER) {
+          delimiterIndex = i;
           break;
         }
       }
