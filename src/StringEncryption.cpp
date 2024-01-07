@@ -26,7 +26,7 @@ void StringEncryption::setup(const uint8_t *Key) {
 
 bool StringEncryption::EncryptString(String &InputString, String &OutputString) {
 
-  const unsigned int MAX_SEGMENT_LENGTH = 13;  // 13 charaters from original String + delimiter + salt
+  const unsigned int MAX_SEGMENT_LENGTH = 14;  // 14 charaters from original String + delimiter + salt
 
   OutputString = "";
   
@@ -117,7 +117,7 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
 
     // Remove the salt at the delimiter
     // First look an index 13 if not at 13 decrement search
-    int delimiterIndex = 13;
+    int delimiterIndex = 14;
     if (out_segment[delimiterIndex] != DELIMITER) {
       
       for (int i = delimiterIndex; i >= 0; i--) {
