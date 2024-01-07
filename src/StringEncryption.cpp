@@ -39,7 +39,7 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
 
     addSalt:
 
-    // Add segment to string
+    // Copy segment to string
     String String16 = string_segment;
 
     // Add delimiter to string
@@ -57,7 +57,7 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
     // Convert to byte array
     uint8_t Byte16[16];
     for (int j = 0; j < 16; j++) {    
-      Byte16[j] = (uint8_t)String16.charAt(j);
+      Byte16[j] = (uint8_t)String16[j];
     }
 
     // Encrypt
@@ -65,9 +65,8 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
 
     // Check for NULL bytes (else redo salt)
     for (int j = 0; j < 16; j++) {
-      if (Byte16[j] == 0) {
+      if (Byte16[j] == 0)
         goto addSalt;
-      }
     }
 
     // Convert back to String
@@ -75,7 +74,7 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
     for (int j = 0; j < 16; j++) {
       String16_output += (char)Byte16[j];
     }
-
+    
     // Add string to output
     OutputString += String16_output;
   }
@@ -98,11 +97,10 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
     // Get segment of input string
     String String16 = InputString.substring(i, (i + SEGMENT_LENGTH));
 
-
     // Convert to byte array
     uint8_t Byte16[16];
     for (int j = 0; j < 16; j++) {    
-      Byte16[j] = (uint8_t)String16.charAt(j);
+      Byte16[j] = (uint8_t)String16[j];
     }
 
     // Encrypt
@@ -114,9 +112,8 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
       out_segment += (char)Byte16[j];
     }
 
-
     // Remove the salt at the delimiter
-    // First look an index 13 if not at 13 decrement search
+    // First look an index 14 if not at 14 decrement search
     int delimiterIndex = 14;
     if (out_segment[delimiterIndex] != DELIMITER) {
       
@@ -128,8 +125,8 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
       }
     }
 
-
-    OutputString += out_segment.substring(0, delimiterIndex);;
+    // Add string to output
+    OutputString += out_segment.substring(0, delimiterIndex);
   }
 
   return true;
