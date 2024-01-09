@@ -61,7 +61,7 @@ size_t AESCommon::keySize() const
 bool AESCommon::setKey(const uint8_t *key, size_t len)
 {
     if (len == ctx[0]) {
-        esp_aes_setkey(ctx, key, len);
+        esp_aes_setkey(ctx, key, len * 8);
         return true;
     }
     return false;
@@ -84,6 +84,13 @@ void AESCommon::clear()
     ctx[0] = keySize;
 }
 
+AES128::~AES128()
+{
+}
+
+AES192::~AES192()
+{
+}
 
 AES256::~AES256()
 {
