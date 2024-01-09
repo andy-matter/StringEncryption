@@ -5,8 +5,8 @@
 #include "WProgram.h"
 #endif
 
-#include "Crypto_Core/Crypto.h"
-#include "Crypto_Core/AES.h"
+#include "CryptoCore/Crypto.h"
+#include "CryptoCore/AES.h"
 
 #include "StringEncryption.h"
 
