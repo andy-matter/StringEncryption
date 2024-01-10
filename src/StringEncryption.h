@@ -68,6 +68,6 @@ public:
 
   private:
 
-  ChaCha chacha = ChaCha(12);
+  ChaCha chacha = ChaCha(16);  // ChaCha with 16 rounds
   const uint8_t ChaChaCounter[8] = {0xBE, 0xC9, 0x3F, 0xA6, 0x52, 0xDA, 0x4E, 0x7D}; 
 };
