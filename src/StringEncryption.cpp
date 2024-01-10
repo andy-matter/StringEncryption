@@ -5,26 +5,17 @@
 #include "WProgram.h"
 #endif
 
-#include "Crypto_Core/Crypto.h"
-#include "Crypto_Core/AES.h"
-
 #include "StringEncryption.h"
 
-AES256 aes256;
 
 
-
-
-void StringEncryption::setup(const uint8_t *Key) { 
-
-  AES_Key = Key;
-  aes256.setKey(AES_Key, 256);
+void StringEncryption_AES::setup(const uint8_t *Key, uint8_t keyLength) { 
+  aes256.setKey(Key, keyLength);
 }
 
 
 
-
-bool StringEncryption::EncryptString(String &InputString, String &OutputString) {
+bool StringEncryption_AES::EncryptString(String &InputString, String &OutputString, short length) {
 
   const unsigned int MAX_SEGMENT_LENGTH = 14;  // 14 charaters from original String + delimiter + salt
 
@@ -84,8 +75,7 @@ bool StringEncryption::EncryptString(String &InputString, String &OutputString) 
 
 
 
-
-bool StringEncryption::DecryptString(String &InputString, String &OutputString) {
+bool StringEncryption_AES::DecryptString(String &InputString, String &OutputString, short length) {
 
   const unsigned int SEGMENT_LENGTH = 16;
 
@@ -129,5 +119,99 @@ bool StringEncryption::DecryptString(String &InputString, String &OutputString) 
     OutputString += out_segment.substring(0, delimiterIndex);
   }
 
+  return true;
+}
+
+
+
+
+
+
+void StringEncryption_ChaCha::setup(const uint8_t *Key, uint8_t keyLength) { 
+  chacha.setKey(Key, keyLength);
+}
+
+
+
+bool StringEncryption_ChaCha::EncryptString(String &InputString, String &OutputString, short length) {
+
+  OutputString = "";
+  
+
+  // Generate random 8 Byte nonce
+  uint8_t Nonce[8];
+  String NonceStr = "";
+  for (uint8_t i = 0; i < 8; i++) {
+    Nonce[i] = random(1, 255);
+    NonceStr += char(Nonce[i]);
+  }
+
+
+  OutputString += NonceStr;
+  chacha.setIV(Nonce, 8);
+  chacha.setCounter(ChaChaCounter, 8);
+
+
+
+  // Convert input to byte array
+  uint8_t InByteArr[length];
+  uint8_t OutByteArr[length];
+  for (short i = 0; i < length; i++) {    
+    InByteArr[i] = (uint8_t)InputString[i];
+  }
+
+
+  // Encrypt
+  chacha.encrypt(OutByteArr, InByteArr, length);
+
+
+  // Convert back to String
+  for (short i = 0; i < length; i++) {
+    OutputString += (char)OutByteArr[i];
+  }
+  
+  
+  return true;
+}
+
+
+
+bool StringEncryption_ChaCha::DecryptString(String &InputString, String &OutputString, short length) {
+
+  OutputString = "";
+  
+
+  // Get nonce from Input-String
+  String NonceStr = InputString.substring(0, 8);
+  String CypherText = InputString.substring(8, length);
+  uint8_t Nonce[8];
+  for (int i = 0; i < 8; i++) {
+    Nonce[i] = (uint8_t)NonceStr[i];
+  }
+
+  chacha.setIV(Nonce, 8);
+  chacha.setCounter(ChaChaCounter, 8);
+
+
+
+  // Convert input to byte array
+  short CypherLength = length - 8;
+  uint8_t InByteArr[CypherLength];
+  uint8_t OutByteArr[CypherLength];
+  for (short i = 0; i < CypherLength; i++) {    
+    InByteArr[i] = (uint8_t)CypherText[i];
+  }
+
+
+  // Encrypt
+  chacha.decrypt(OutByteArr, InByteArr, CypherLength);
+
+
+  // Convert back to String
+  for (short i = 0; i < CypherLength; i++) {
+    OutputString += (char)OutByteArr[i];
+  }
+  
+  
   return true;
 }

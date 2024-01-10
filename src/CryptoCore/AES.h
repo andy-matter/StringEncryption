@@ -23,7 +23,6 @@
 #ifndef CRYPTO_AES_h
 #define CRYPTO_AES_h
 
-//#include <Crypto.h>
 #include "BlockCipher.h"
 
 // Determine which AES implementation to export to applications.
@@ -67,10 +66,39 @@ protected:
     static void applySbox(uint8_t *output, const uint8_t *input);
     /** @endcond */
 
+    friend class AESTiny128;
     friend class AESTiny256;
+    friend class AESSmall128;
     friend class AESSmall256;
 };
 
+class AES128 : public AESCommon
+{
+public:
+    AES128();
+    virtual ~AES128();
+
+    size_t keySize() const;
+
+    bool setKey(const uint8_t *key, size_t len);
+
+private:
+    uint8_t sched[176];
+};
+
+class AES192 : public AESCommon
+{
+public:
+    AES192();
+    virtual ~AES192();
+
+    size_t keySize() const;
+
+    bool setKey(const uint8_t *key, size_t len);
+
+private:
+    uint8_t sched[208];
+};
 
 class AES256 : public AESCommon
 {
@@ -106,7 +134,6 @@ private:
     uint8_t schedule[32];
 };
 
-
 class AESSmall256 : public AESTiny256
 {
 public:
@@ -123,8 +150,41 @@ private:
     uint8_t reverse[32];
 };
 
+class AESTiny128 : public BlockCipher
+{
+public:
+    AESTiny128();
+    virtual ~AESTiny128();
 
+    size_t blockSize() const;
+    size_t keySize() const;
 
+    bool setKey(const uint8_t *key, size_t len);
+
+    void encryptBlock(uint8_t *output, const uint8_t *input);
+    void decryptBlock(uint8_t *output, const uint8_t *input);
+
+    void clear();
+
+private:
+    uint8_t schedule[16];
+};
+
+class AESSmall128 : public AESTiny128
+{
+public:
+    AESSmall128();
+    virtual ~AESSmall128();
+
+    bool setKey(const uint8_t *key, size_t len);
+
+    void decryptBlock(uint8_t *output, const uint8_t *input);
+
+    void clear();
+
+private:
+    uint8_t reverse[16];
+};
 
 #endif // CRYPTO_AES_DEFAULT
 
@@ -146,7 +206,11 @@ private:
 // AES192, and AES256 to identify the hardware-accelerated algorithms.
 // These can cause conflicts with the names we use in our library.
 // Define our class names to something else to work around esp-idf.
+#undef AES128
+#undef AES192
 #undef AES256
+#define AES128 AES128_ESP
+#define AES192 AES192_ESP
 #define AES256 AES256_ESP
 
 /** @endcond */
@@ -173,12 +237,32 @@ private:
     uint8_t ctx[CRYPTO_ESP32_CONTEXT_SIZE];
 };
 
+class AES128 : public AESCommon
+{
+public:
+    AES128() : AESCommon(16) {}
+    virtual ~AES128();
+};
+
+class AES192 : public AESCommon
+{
+public:
+    AES192() : AESCommon(24) {}
+    virtual ~AES192();
+};
+
 class AES256 : public AESCommon
 {
 public:
     AES256() : AESCommon(32) {}
     virtual ~AES256();
 };
+
+// The ESP32 AES context is so small that it already qualifies as "tiny".
+typedef AES128 AESTiny128;
+typedef AES256 AESTiny256;
+typedef AES128 AESSmall128;
+typedef AES256 AESSmall256;
 
 #endif // CRYPTO_AES_ESP32
 

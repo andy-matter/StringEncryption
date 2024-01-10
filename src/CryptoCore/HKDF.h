@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Southern Storm Software, Pty Ltd.
+ * Copyright (C) 2022 Southern Storm Software, Pty Ltd.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,57 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CRYPTO_h
-#define CRYPTO_h
+#ifndef CRYPTO_HKDF_h
+#define CRYPTO_HKDF_h
 
-#include <Arduino.h>
-#include <inttypes.h>
-#include <stddef.h>
+#include "Hash.h"
+#include "Crypto.h"
 
-void clean(void *dest, size_t size);
+class HKDFCommon
+{
+public:
+    virtual ~HKDFCommon();
+
+    void setKey(const void *key, size_t keyLen, const void *salt = 0, size_t saltLen = 0);
+
+    void extract(void *out, size_t outLen, const void *info = 0, size_t infoLen = 0);
+
+    void clear();
+
+protected:
+    HKDFCommon();
+    void setHashAlgorithm(Hash *hashAlg, uint8_t *buffer)
+    {
+        hash = hashAlg;
+        buf = buffer;
+    }
+
+private:
+    Hash *hash;
+    uint8_t *buf;
+    uint8_t counter;
+    uint8_t posn;
+};
 
 template <typename T>
-inline void clean(T &var)
+class HKDF : public HKDFCommon
 {
-    clean(&var, sizeof(T));
+public:
+    HKDF() { setHashAlgorithm(&hashAlg, buffer); }
+    ~HKDF() { ::clean(buffer, sizeof(buffer)); }
+
+private:
+    T hashAlg;
+    uint8_t buffer[T::HASH_SIZE * 2];
+};
+
+template <typename T> void hkdf
+    (void *out, size_t outLen, const void *key, size_t keyLen,
+     const void *salt, size_t saltLen, const void *info, size_t infoLen)
+{
+    HKDF<T> context;
+    context.setKey(key, keyLen, salt, saltLen);
+    context.extract(out, outLen, info, infoLen);
 }
-
-bool secure_compare(const void *data1, const void *data2, size_t len);
-
-#if defined(ESP8266)
-extern "C" void system_soft_wdt_feed(void);
-#define crypto_feed_watchdog() system_soft_wdt_feed()
-#else
-#define crypto_feed_watchdog() do { ; } while (0)
-#endif
 
 #endif
