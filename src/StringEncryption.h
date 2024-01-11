@@ -1,5 +1,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+// Improvements:
 //  - Actualy return if encrypt/decrypt passed ore failed
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,13 +16,15 @@
 class StringEncryption_AES {
 public:
 
-/** @param Key: The AES256 encryption-key as a Byte[32] array
+/** @param Key: The AES256 encryption-key as a byte-array
+ *  @param keyLength: The length of the encyptionkey in bytes
   */
   void setup (const uint8_t *Key, uint8_t keyLength);
 
 
-/** @param InputString: The unencrypted plain text data to be encrypted (MUST NOT CONTAIN '!')
+/** @param InputString: The unencrypted plain text data to be encrypted
   * @param OutputString: The encrypted data using AES256 encryption and random salt
+  * @param length: The length of the InputString (eg. using InputString.length())
   * @param return: True if encryption was successful otherwhise False
   */
   bool EncryptString(String &InputString, String &OutputString, short length);
@@ -29,6 +32,7 @@ public:
 
 /** @param InputString: The encrypted cypher text data to be decrypted
   * @param OutputString: The decrypted data using AES256 decryption
+  * @param length: The length of the InputString (eg. using InputString.length())
   * @param return: True if decryption was successful otherwhise False
   */
   bool DecryptString(String &InputString, String &OutputString, short length);
@@ -47,13 +51,15 @@ private:
 class StringEncryption_ChaCha {
 public:
 
-/** @param Key: The AES256 encryption-key as a Byte[32] array
+/** @param Key: The ChaCha encryption-key as a byte-array
+ *  @param keyLength: The length of the encyptionkey in bytes
   */
   void setup (const uint8_t *Key, uint8_t keyLength);
 
 
-/** @param InputString: The unencrypted plain text data to be encrypted (MUST NOT CONTAIN '!')
-  * @param OutputString: The encrypted data using AES256 encryption and random salt
+/** @param InputString: The unencrypted plain text data to be encrypted
+  * @param OutputString: The encrypted data using ChaCha20 encryption
+  * @param length: The length of the InputString (eg. using InputString.length())
   * @param return: True if encryption was successful otherwhise False
   */
   bool EncryptString(String &InputString, String &OutputString, short length);
@@ -61,6 +67,7 @@ public:
 
 /** @param InputString: The encrypted cypher text data to be decrypted
   * @param OutputString: The decrypted data using AES256 decryption
+  * @param length: The length of the InputString (eg. using InputString.length())
   * @param return: True if decryption was successful otherwhise False
   */
   bool DecryptString(String &InputString, String &OutputString, short length);
@@ -68,6 +75,6 @@ public:
 
   private:
 
-  ChaCha chacha = ChaCha(16);  // ChaCha with 16 rounds
-  const uint8_t ChaChaCounter[8] = {0xBE, 0xC9, 0x3F, 0xA6, 0x52, 0xDA, 0x4E, 0x7D}; 
+  ChaCha chacha = ChaCha(20);  // ChaCha with 20 rounds
+  const uint8_t ChaChaCounter[8] = {0xBE, 0xC9, 0x3F, 0xA6, 0x52, 0xDA, 0x4E, 0x7D};  // Random values, that the counter doesn't start at 0
 };
