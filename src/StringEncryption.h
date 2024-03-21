@@ -1,7 +1,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Improvements:
-//  - Actualy return if encrypt/decrypt passed ore failed
+//  - Actualy return if encrypt/decrypt passed or failed
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -75,6 +75,6 @@ public:
 
   private:
 
-  ChaCha chacha = ChaCha(20);  // ChaCha with 20 rounds
+  ChaCha chacha = ChaCha(24);  // ChaCha with 24 rounds
   const uint8_t ChaChaCounter[8] = {0xBE, 0xC9, 0x3F, 0xA6, 0x52, 0xDA, 0x4E, 0x7D};  // Random values, that the counter doesn't start at 0
 };
