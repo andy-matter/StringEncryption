@@ -2,7 +2,7 @@
   "name": "StringEncryption",
   "version": "0.1.0",
   "description": "Simplified AES and ChaCha encryption/decryption of Strings (based on https://github.com/rweather/arduinolibs)",
-  "keywords": "Arduino", "PlatformIO", "AES256", "ChaCha", "Encryption",
+  "keywords": "Arduino, PlatformIO, AES256, ChaCha, Encryption, String, Easy",
   "repository":
   {
     "type": "git",
