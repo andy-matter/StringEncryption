@@ -138,6 +138,7 @@ bool StringEncryption_AES::DecryptString(String &InputString, String &OutputStri
 
 void StringEncryption_ChaCha::setup(const uint8_t *Key, uint8_t keyLength) { 
   chacha.setKey(Key, keyLength);
+  chacha.setCounter(ChaChaCounter, 8);
 }
 
 
@@ -154,9 +155,7 @@ bool StringEncryption_ChaCha::EncryptString(String &InputString, String &OutputS
     OutputString += char(Nonce[i]);
   }
 
-  // Setup the encryption
   chacha.setIV(Nonce, 8);
-  chacha.setCounter(ChaChaCounter, 8);
 
 
   // Convert input-string to byte-array
@@ -186,9 +185,7 @@ bool StringEncryption_ChaCha::DecryptString(String &InputString, String &OutputS
         Nonce[i] = InputString[i];
     }
 
-    // Setup the decryption
     chacha.setIV(Nonce, 8);
-    chacha.setCounter(ChaChaCounter, 8);
 
 
     // Convert input to byte array
