@@ -144,45 +144,31 @@ void StringEncryption_ChaCha::setup(const uint8_t *Key, uint8_t keyLength) {
 
 
 bool StringEncryption_ChaCha::EncryptString(String &InputString, String &OutputString, short length) {
-
   OutputString = "";  // Clear the output
   
 
   // Generate random 8 Byte nonce and add it to the front of the output
   uint8_t Nonce[8];
-  String NonceStr = "";
   for (uint8_t i = 0; i < 8; i++) {
     Nonce[i] = random(1, 255);
-    NonceStr += char(Nonce[i]);
+    OutputString += char(Nonce[i]);
   }
-
-  OutputString += NonceStr;
-
 
   // Setup the encryption
   chacha.setIV(Nonce, 8);
   chacha.setCounter(ChaChaCounter, 8);
 
 
-
   // Convert input-string to byte-array
-  uint8_t InByteArr[length];
-  uint8_t OutByteArr[length];
-  for (short i = 0; i < length; i++) {    
-    InByteArr[i] = (uint8_t)InputString[i];
-  }
-
+  unsigned char OutByteArr[length];
+  InputString.getBytes(OutByteArr, length+1);
 
   // Encrypt
-  chacha.encrypt(OutByteArr, InByteArr, length);
-
+  chacha.encrypt(OutByteArr, OutByteArr, length);
 
   // Convert back to String
-  for (short i = 0; i < length; i++) {
-    OutputString += (char)OutByteArr[i];
-  }
-  
-  
+  OutputString += String(OutByteArr, length);
+
   return true;
 }
 
@@ -190,43 +176,32 @@ bool StringEncryption_ChaCha::EncryptString(String &InputString, String &OutputS
 
 
 bool StringEncryption_ChaCha::DecryptString(String &InputString, String &OutputString, short length) {
-
-  OutputString = "";  // Clear the output
-  
-
-  // Get nonce from InputString  (the first 8 characters)
-  String NonceStr = InputString.substring(0, 8);
-  String CypherText = InputString.substring(8, length);
-  uint8_t Nonce[8];
-  for (int i = 0; i < 8; i++) {
-    Nonce[i] = (uint8_t)NonceStr[i];
-  }
+    OutputString = ""; // Clear the output
+    short CypherLength = length - 8;
 
 
-  // Setup the decryption
-  chacha.setIV(Nonce, 8);
-  chacha.setCounter(ChaChaCounter, 8);
+    // Get nonce from InputString (the first 8 characters)
+    uint8_t Nonce[8];
+    for (int i = 0; i < 8; i++) {
+        Nonce[i] = InputString[i];
+    }
+
+    // Setup the decryption
+    chacha.setIV(Nonce, 8);
+    chacha.setCounter(ChaChaCounter, 8);
 
 
+    // Convert input to byte array
+    unsigned char OutByteArr[CypherLength];
+    for (short i = 0; i < CypherLength; i++) {
+        OutByteArr[i] = InputString[i+8]; // Start from index 8
+    }
 
-  // Convert input to byte array
-  short CypherLength = length - 8;
-  uint8_t InByteArr[CypherLength];
-  uint8_t OutByteArr[CypherLength];
-  for (short i = 0; i < CypherLength; i++) {    
-    InByteArr[i] = (uint8_t)CypherText[i];
-  }
+    // Decrypt
+    chacha.decrypt(OutByteArr, OutByteArr, CypherLength);
 
+    // Convert back to String
+    OutputString = String(OutByteArr, CypherLength);
 
-  // Encrypt
-  chacha.decrypt(OutByteArr, InByteArr, CypherLength);
-
-
-  // Convert back to String
-  for (short i = 0; i < CypherLength; i++) {
-    OutputString += (char)OutByteArr[i];
-  }
-  
-  
-  return true;
+    return true;
 }
