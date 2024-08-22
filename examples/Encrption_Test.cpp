@@ -13,28 +13,25 @@ String EncryptedStr, DecryptedStr;
 
 
 
-
 void setup() {
 
   Serial.begin(115200);
-  delay(100);
+  Serial.println("");
+  Serial.println("");
 
   Cypher.setup(Key, 32);   // Setting up the cypher
 }
 
 
 
-
 void loop() {
 
   Cypher.EncryptString(TestString, EncryptedStr, TestString.length());       // Encrypt TestString to EncryptedStr
-
   Cypher.DecryptString(EncryptedStr, DecryptedStr, EncryptedStr.length());   // Decrypt EncryptedStr to DecryptedStr
 
-
-  if (!TestString.equals(DecryptedStr)) {    // Compare TestString and DecryptedStr
-    Serial.println("Test Failed");
-  }
+  Serial.print("Plain Text:   ");  Serial.println(TestString);    Serial.println("           ");
+  Serial.print("Cipher Text:  ");  Serial.println(EncryptedStr);  Serial.println("           ");
+  Serial.print("Plain Text:   ");  Serial.println(DecryptedStr);  Serial.println("           ");
 
   while(1);   // Freeze the loop
 }

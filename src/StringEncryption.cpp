@@ -166,7 +166,9 @@ bool StringEncryption_ChaCha::EncryptString(String &InputString, String &OutputS
   chacha.encrypt(OutByteArr, OutByteArr, length);
 
   // Convert back to String
-  OutputString += String(OutByteArr, length);
+  for (int j = 0; j < length; j++) {
+    OutputString += (char)OutByteArr[j];
+  }
 
   return true;
 }
@@ -198,7 +200,9 @@ bool StringEncryption_ChaCha::DecryptString(String &InputString, String &OutputS
     chacha.decrypt(OutByteArr, OutByteArr, CypherLength);
 
     // Convert back to String
-    OutputString = String(OutByteArr, CypherLength);
+    for (int j = 0; j < CypherLength; j++) {
+      OutputString += (char)OutByteArr[j];
+    }
 
     return true;
 }
