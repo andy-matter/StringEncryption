@@ -19,7 +19,7 @@ void setup() {
   Serial.println("");
   Serial.println("");
 
-  Cypher.setup(Key, 32);   // Setting up the cypher
+  Cypher.setup(Key, 32, A7);   // Setting up the cypher
 }
 
 

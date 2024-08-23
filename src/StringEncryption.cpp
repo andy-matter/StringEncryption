@@ -9,8 +9,20 @@
 
 
 
-void StringEncryption_AES::setup(const uint8_t *Key, uint8_t keyLength) { 
+void StringEncryption_AES::setup(const uint8_t *Key, uint8_t keyLength, uint8_t AIN_Pin) { 
   aes256.setKey(Key, keyLength);
+
+
+  // Generate randomSeed from analog input
+  unsigned long seed = 0;
+  uint8_t digit = 0; 
+
+  for (int i = 0; i < 9; i++) {
+    digit = analogRead(AIN_Pin) % 10;   // Get the least significant numeral of micros()
+    seed = seed * 10 + digit;      // Shift the current result left by one decimal place (multiply by 10)
+  }
+
+  randomSeed(seed);
 }
 
 
@@ -136,9 +148,21 @@ bool StringEncryption_AES::DecryptString(String &InputString, String &OutputStri
 
 
 
-void StringEncryption_ChaCha::setup(const uint8_t *Key, uint8_t keyLength) { 
+void StringEncryption_ChaCha::setup(const uint8_t *Key, uint8_t keyLength, uint8_t AIN_Pin) { 
   chacha.setKey(Key, keyLength);
   chacha.setCounter(ChaChaCounter, 8);
+
+
+  // Generate randomSeed from analog input
+  unsigned long seed = 0;
+  uint8_t digit = 0; 
+
+  for (int i = 0; i < 9; i++) {
+    digit = analogRead(AIN_Pin) % 10;   // Get the least significant numeral of micros()
+    seed = seed * 10 + digit;      // Shift the current result left by one decimal place (multiply by 10)
+  }
+
+  randomSeed(seed);
 }
 
 
