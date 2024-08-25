@@ -19,7 +19,15 @@ void setup() {
   Serial.println("");
   Serial.println("");
 
-  Cypher.setup(Key, 32, A7);   // Setting up the cypher
+  Cypher.setup(Key, 32);   // Setting up the cypher
+
+
+  // If the MCU does not have a hardware RNG it is advised to set the randomSeed using an analog input
+  for (int i = 0; i < 9; i++) {
+    uint8_t digit = analogRead(A7) % 10;   // Get the least significant numeral of the analog Pin
+    seed = seed * 10 + digit;      // Shift the current result left by one decimal place (multiply by 10)
+  }
+  randomSeed(seed);
 }
 
 

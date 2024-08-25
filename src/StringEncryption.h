@@ -18,9 +18,8 @@ public:
 
 /** @param Key: The AES256 encryption-key as a byte-array
  *  @param keyLength: The length of the encyptionkey in bytes
- *  @param AIN_Pin:  Unused analog input for randomSeed generation
   */
-  void setup (const uint8_t *Key, uint8_t keyLength, uint8_t AIN_Pin);
+  void setup (const uint8_t *Key, uint8_t keyLength);
 
 
 /** @param InputString: The unencrypted plain text data to be encrypted
@@ -54,9 +53,8 @@ public:
 
 /** @param Key: The ChaCha encryption-key as a byte-array
  *  @param keyLength: The length of the encyptionkey in bytes
- *  @param AIN_Pin:  Unused analog input for randomSeed generation
   */
-  void setup (const uint8_t *Key, uint8_t keyLength, uint8_t AIN_Pin);
+  void setup (const uint8_t *Key, uint8_t keyLength);
 
 
 /** @param InputString: The unencrypted plain text data to be encrypted
