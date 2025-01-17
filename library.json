@@ -6,14 +6,14 @@
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/derAndiofficial/StringEncryption.git"
+    "url": "https://github.com/andy-matter/StringEncryption.git"
   },
   "authors":
   [
     {
       "name": "derAndiofficial",
       "email": "nur.sauerei@gmail.com,",
-      "url": "https://github.com/derAndiofficial"
+      "url": "https://github.com/andy-matter"
     }
   ],
   "license": "NON",
